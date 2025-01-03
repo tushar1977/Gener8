@@ -1,0 +1,392 @@
+#:kivy 2.2.0
+#:import SwapTransition kivy.uix.screenmanager.SwapTransition
+
+<RootWidget>:
+	canvas:
+	    Color:
+	        rgba: (128/255, 128/255, 128/255, 1)
+	    Rectangle:
+	        pos: self.pos
+	        size: self.size
+
+	sm: sm
+	menu_actionbar: menu_actionbar
+	orientation: "vertical"
+	
+	MenuActionBar:
+		id: menu_actionbar
+	
+	ScreenManager:
+		id: sm
+		transition: SwapTransition()
+		
+		MainScreen:
+			id: main_screen
+		GeneratingScreen:
+			id: gen_screen
+		GenCompleteScreen:
+			id: gen_comp_screen
+		MetadataScreen:
+			id: metadata_screen
+		MetadataGenScreen:
+		    id: metadata_gen_screen
+		MetadataGenCompScreen:
+		    id: metadata_gen_comp_screen
+		TipsScreen:
+			id: tips_screen
+	
+<MenuActionBar@ActionBar>:
+    canvas.after:
+        Color:
+            rgba: 1, 1, 1, 1
+        Line:
+            rounded_rectangle: self.x, self.y, self.width, self.height, 6
+            width: 2
+	background_color: "black"
+	action_view: action_view
+
+	ActionView:
+		id: action_view
+		home_button: home_button
+		gen_metadata_button: gen_metadata_button
+		tips_button: tips_button
+		
+		ActionPrevious:
+			title: "Gener8"
+			color: "white"
+			app_icon: "Gener8_Icon.png"
+			with_previous: False
+		ActionButton:
+		    canvas.after:
+		        Color:
+                    rgba: 1, 1, 1, 1
+                Line:
+                    rounded_rectangle: self.x, self.y, self.width, self.height, 6
+                    width: 2
+			id: home_button
+			text: "Home"
+			bold: True
+			color: "white"
+			on_press:
+			    app.root.ids.sm.current = "main_screen"
+			    app.root.ids.gen_comp_screen.image_layout.clear_widgets()
+		ActionButton:
+		    canvas.after:
+		        Color:
+                    rgba: 1, 1, 1, 1
+                Line:
+                    rounded_rectangle: self.x, self.y, self.width, self.height, 6
+                    width: 2
+			id: gen_metadata_button
+			text: "Generate Metadata"
+			bold: True
+			color: "white"
+			on_press:
+			    app.root.ids.sm.current = "metadata_screen"
+			    app.root.ids.gen_comp_screen.image_layout.clear_widgets()
+		ActionButton:
+		    canvas.after:
+		        Color:
+                    rgba: 1, 1, 1, 1
+                Line:
+                    rounded_rectangle: self.x, self.y, self.width, self.height, 6
+                    width: 2
+			id: tips_button
+			text: "Tips"
+			bold: True
+			color: "white"
+			on_press:
+			    app.root.ids.sm.current = "tips_screen"
+			    app.root.ids.gen_comp_screen.image_layout.clear_widgets()
+			    app.root.ids.gen_screen.clear_widgets()
+
+<MainScreen@Screen>:
+	layers: layers
+	supply: supply
+	folder_selector: folder_selector
+	name: "main_screen"
+
+	FloatLayout:
+	    CustomTextInput:
+	        id: supply
+			halign: "left"
+			multiline: False
+			hint_text: "Enter the number of images to generate."
+			use_bubble: True
+			input_filter: "int"
+			size_hint: .2, .1
+			pos_hint: {"right": 0.25, "top": .5}
+
+		CustomTextInput:
+		    id: layers
+		    halign: "left"
+			multiline: True
+			hint_text: "Enter the layer names in order of selection during generation."
+			use_bubble: True
+			size_hint: .35, .6
+			pos_hint: {"center_x": .5, "center_y": .5}
+
+		RoundButton:
+		    id: folder_selector
+		    text: "Select Layers Folder"
+			halign: "center"
+			bold: True
+			size_hint: .2, .1
+			pos_hint: {"right": .95, "top": .5}
+			on_press: app.root.select_images_folder()
+
+		RoundButton:
+		    text: "Generate images"
+			halign: "center"
+			bold: True
+			size_hint: .4, .09
+			pos_hint: {"center_x": .5, "top": .15}
+			on_press: app.root.on_generate_images()
+
+<GeneratingScreen@Screen>:
+	progress_text: progress_text
+	progress_bar: progress_bar
+	name: "gen_screen"
+	
+	FloatLayout:
+	    Label:
+		    canvas.before:
+			    Color:
+			        rgba: 0, 0, 0, 1
+			    RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [18]
+			canvas.after:
+			    Color:
+			        rgba: 1, 1, 1, 1
+			    Line:
+			        rounded_rectangle: self.x, self.y, self.width, self.height, 10
+			        width: 2
+            text: "Do not exit or minimize the app until generation is complete!!"
+            text_size: self.size
+			size: self.texture_size
+			font_size: 20
+            bold: True
+			halign: "center"
+			valign: "center"
+			color: "red"
+			pos_hint: {"center_x": .5, "center_y": .8}
+			size_hint: .65, .1
+
+		
+		ProgressBar:
+		    id: progress_bar
+		    canvas.before:
+			    Color:
+			        rgba: 0, 0, 0, 1
+			    RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [9]
+			canvas.after:
+			    Color:
+			        rgba: 1, 1, 1, 1
+			    Line:
+			        rounded_rectangle: self.x, self.y, self.width, self.height, 10
+			        width: 2
+			max: 100
+			size_hint: .45, .05
+			pos_hint: {"center_x": .5,"center_y": .5}
+		
+		Label:
+			id: progress_text
+			text: "Preparing to generate...."
+			bold: True
+			halign: "center"
+			font_size: 15
+			color: "black"
+			pos_hint: {"center_x": .5, "center_y": .4}
+
+
+<GenCompleteScreen@Screen>:
+	name: "gen_comp_screen"
+	image_layout: image_layout
+	
+	FloatLayout:
+		spacing: 2.5
+		Label:
+		    canvas.before:
+			    Color:
+			        rgba: 0, 0, 0, 1
+			    RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [18]
+			canvas.after:
+			    Color:
+			        rgba: 1, 1, 1, 1
+			    Line:
+			        rounded_rectangle: self.x, self.y, self.width, self.height, 10
+			        width: 2
+			text: "[b]Image generation complete!![/b]\nPlease see the 'Gener8 App Output' folder, it contains the just generated images, a GIF of some images in the collection and a rarity table (which shows how rare each trait in the collection is).\nPlease note that this folder will also contain the metadata of your collection after you generate them.\nBelow, are some of your beautiful arts for you to bask in. Click on an image to view it."
+			text_size: self.size
+			size: self.texture_size
+			font_size: 15
+			markup: True
+            padding: [15, 5, 15, 15]
+			color: "white"
+			pos_hint: {"center_x": .5, "center_y": .9}
+			size_hint: 1, .15
+		
+		GridLayout:
+			canvas:
+			    Color:
+			        rgba: 1, 1, 1, 1
+			    Line:
+			        rounded_rectangle: self.x, self.y, self.width, self.height, 10
+			        width: 2
+			id: image_layout
+			pos_hint: {"center_x": .5, "center_y": .4}
+			size_hint: 1,.789
+			cols: 7
+			rows: 5
+			padding: [1, 1, 1, 1]
+			spacing: [2, 2]
+
+<MetadataScreen@Screen>:
+	name: "metadata_screen"
+	base_image_url: base_image_url
+	extra_metadata: extra_metadata
+	collection_name: collection_name
+
+	FloatLayout:
+
+		CustomTextInput:
+			id: extra_metadata
+			halign: "left"
+			size_hint: .35, .35
+			multiline: True
+			hint_text: "Enter the extra information, if any, you wish to include in your NFT metadata (excluding your base image url, you will enter that below) as described in the Tips section. If there are no extra information, please leave this box empty."
+			use_bubble: True
+			pos_hint: {"center_x": .5, "center_y": .75}
+
+		CustomTextInput:
+		    id: base_image_url
+		    halign: "left"
+			size_hint: .6, .1
+			multiline: False
+			hint_text: "Enter your base image url."
+			use_bubble: True
+			pos_hint: {"center_x": .5, "center_y": .45}
+
+		CustomTextInput:
+		    id: collection_name
+		    halign: "left"
+			size_hint: .6, .1
+			multiline: False
+			hint_text: "Enter the name of your NFT collection."
+			use_bubble: True
+			pos_hint: {"center_x": .5, "center_y": .3}
+
+		RoundButton:
+			text: "Generate Metadata"
+			bold: True
+			size_hint: .3, .1
+			pos_hint: {"center_x": .5, "center_y": .15}
+			on_press: app.root.on_generate_metadata()
+
+<MetadataGenScreen@Screen>:
+	progress_text: progress_text
+	progress_bar: progress_bar
+	name: "metadata_gen_screen"
+
+	FloatLayout:
+		Label:
+			text: "Do not exit or minimize the app until generation is complete!!"
+			bold: True
+			halign: "center"
+			font_size: 20
+			color: "red"
+			pos_hint: {"center_x": .5, "center_y": .8}
+
+		ProgressBar:
+		    id: progress_bar
+			max: 100
+			size_hint_x: .6
+			pos_hint: {"center_x": .5,"center_y": .5}
+
+		Label:
+			id: progress_text
+			text: "Preparing to generate...."
+			bold: True
+			halign: "center"
+			font_size: 15
+			color: "black"
+			pos_hint: {"center_x": .5, "center_y": .4}
+
+<MetadataGenCompScreen@Screen>:
+    name: "metadata_gen_comp_screen"
+
+    FloatLayout:
+        Image:
+            source: "Done.png"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            size_hint: .4, .4
+
+        Label:
+            text: "Metadata generation complete!"
+		    bold: True
+		    halign: "center"
+		    font_size: 17
+		    color: "black"
+		    pos_hint: {"center_x": .5, "center_y": .2}
+
+
+<TipsScreen@Screen>:
+	name: "tips_screen"
+
+	FloatLayout:
+		Label:
+		    canvas.before:
+			    Color:
+			        rgba: 0, 0, 0, 1
+			    RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [18]
+			canvas.after:
+			    Color:
+			        rgba: 1, 1, 1, 1
+			    Line:
+			        rounded_rectangle: self.x, self.y, self.width, self.height, 10
+			        width: 2
+            text:
+                '''[b]Welcome to Gener8, your generative NFT art engine.[/b]\nTo use Gener8, you must know a few things:\n— Each trait image must be in a trait category folder and each trait category folder must be contained in a root folder E.g /Layers/Headgear/Crown.PNG\nThe root image folder (in our case, "Layers") is what is selected when asked to Select Layers Folder.\n— Each trait image must be in PNG format, each having the same size in pixels. E.g 2000 x 2000.\n\n[b]Preparing to generate arts[/b]\nGener8 uses weights to determine the probability of occurrence for each trait/attribute. The higher the numerical value of this weight, the greater the probability of the trait occurring in the generated collection. Note that the sum total of the weights in a trait category [b]MUST be 100[/b]. To specify the weight of each trait image, you must do so in the trait image's filename. For example, if you have a crown trait and you want to assign it a weight of 6.9, you must rename it's filename from "Crown" to "Crown 6.9", without the quotes of course.\n\n[b]Preparing to generate art metadata[/b]\nGener8 gives you the option to include custom additional data in the metadata of the generated arts. The first input box in the "Generate Metadata" section of the app facilitates this. To properly supply these custom data, you must observe the following syntax:\nkey=value\nFor example if you want to indicate the creator of the art (Builciber) and their social media page (https://x.com/builciber) in the metadata, you'll do this as follows:\n\ncreator=Builciber\ncreator's social=https://x.com/builciber\n\nThat's all you need to know!. The hint text in each Text Input box will help you determine what data you need to supply to them. If you make mistakes along the way, the error messages are painfully descriptive and specific which should help you out.'''
+            text_size: self.width, self.height
+            size: self.texture_size
+            markup: True
+            padding: [15, 5, 15, 15]
+            color: "white"
+            pos_hint: {"center_x": .5, "center_y": .5}
+			size_hint: .75, .7
+
+<ErrorLabel@Label>:
+    text_size: root.width, None
+	size: self.texture_size
+	halign: "center"
+
+<RoundButton@Button>
+    background_color: (0,0,0,0)
+    background_normal: ''
+    canvas.before:
+        Color:
+            rgba: 0,0,0,1
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [18]
+
+<CustomTextInput@TextInput>
+    canvas.after:
+        Color:
+            rgba: 1, 1, 1, 1
+        Line:
+            rounded_rectangle: self.x, self.y, self.width, self.height, 10
+            width: 2.9
+    hint_text_color: "black"
