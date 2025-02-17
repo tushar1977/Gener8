@@ -6,7 +6,7 @@ Gener8 is a desktop application with a special focus on ease-of-use and speed th
 > Gener8's final form is a packaged desktop application. This repository exists to facilitate open-source contributions from devs the world over, but the code therein is functional enough to allow anyone with the slightest programming background to run Gener8 as is to satisfy their needs.
 
 ## Using Gener8
-Gener8 was built with *ease-of-use* as a core focus. To run this code, you must have Python >=3.10.7 installed.  
+Gener8 was built with *ease-of-use* as a core focus. To run this code, you must have Python >=3.9.0 installed.  
 Begin by cloning the repository:  
 `git clone https://github.com/Builciber/Gener8`  
 CD into the cloned respository:  
